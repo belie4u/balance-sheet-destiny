@@ -1,0 +1,19 @@
+{% extends 'reconciliations/base_generic.html' %}
+
+{% block content %}
+<h2>Are you sure you want to delete this GL Detail?</h2>
+
+<div class="alert alert-warning">
+    <strong>Warning:</strong> This action cannot be undone.
+</div>
+
+<p><strong>GL Detail:</strong> {{ object.glnum }} - {{ object.gldesc }}</p>
+<p><strong>Amount:</strong> {{ object.glamt }}</p>
+<p><strong>Status:</strong> {{ object.status }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, delete</button>
+    <a href="{% url 'gldetail-list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

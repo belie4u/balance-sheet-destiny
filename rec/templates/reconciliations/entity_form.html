@@ -1,0 +1,32 @@
+{% extends 'reconciliations/base_generic.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">
+        {% if object %}
+        Edit Entity
+        {% else %}
+        Create New Entity
+        {% endif %}
+    </h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                {% if object %}
+                Save Changes
+                {% else %}
+                Create Entity
+                {% endif %}
+            </button>
+        </div>
+    </form>
+
+    <div class="my-3">
+        <a href="{% url 'entity-list' %}" class="btn btn-secondary">Back to Entity List</a>
+    </div>
+</div>
+{% endblock %}

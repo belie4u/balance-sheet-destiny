@@ -1,0 +1,35 @@
+{% extends 'reconciliations/base_generic.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container py-4 px-3">
+    <div class="modal-dialog modal-dialog-centered m-auto" style="max-width: 500px;">
+        <div class="modal-content shadow rounded-3 overflow-hidden">
+            <div class="modal-header bg-primary text-white py-2 px-3">
+                <h5 class="modal-title my-1">
+                    {% if form.instance.pk %}Update Status{% else %}Create Status{% endif %}
+                </h5>
+            </div>
+            <form method="post" action="" class="p-3">
+                {% csrf_token %}
+                <div class="modal-body p-0">
+                    <div class="form-group mb-3">
+                        <label for="id_option" class="form-label">Status Name</label>
+                        {{ form.option|add_class:"form-control" }}
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="id_color" class="form-label">Status Color</label>
+                        <input type="color" name="color" id="id_color" class="form-control form-control-color"
+                            value="{{ form.instance.color|default:'#007bff' }}">
+                        <small class="text-muted">Choose a color to represent this status visually.</small>
+                    </div>
+                </div>
+                <div class="modal-footer px-0 pt-2 d-flex justify-content-between border-0">
+                    <a href="{% url 'status-list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

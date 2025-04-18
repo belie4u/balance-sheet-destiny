@@ -1,0 +1,147 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Reconciliation System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <style>
+    .progress-container {
+        position: relative;
+        height: 70px;
+    }
+
+    .step {
+        position: relative;
+    }
+
+    .circle {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+        background: #ccc;
+        display: inline-block;
+        font-weight: bold;
+    }
+
+    .step small {
+        display: block;
+        font-size: 12px;
+    }
+
+    /* Optional: Add connectors between steps */
+    .step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 20px;
+        right: -50%;
+        height: 4px;
+        width: 100%;
+        background-color: #ccc;
+        z-index: -1;
+    }
+
+    .step:not(:first-child)::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: -50%;
+        height: 4px;
+        width: 100%;
+        background-color: #ccc;
+        z-index: -1;
+    }
+
+    .circle.bg-success ~ small {
+        color: green;
+    }
+</style>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Reconciliation</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    
+                    <li class="nav-item"><a class="nav-link" href="{% url 'entity-list' %}">Entities</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'period-list' %}">Periods</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'status-lists' %}">Statuses</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'gldetail-lists' %}">GL Details</a></li>
+                </ul>
+                <span class="navbar-text">Logged in as {{ user.username }}</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Step Progress Bar -->
+    <div class="container mb-4">
+        <div class="progress-container d-flex justify-content-between align-items-center px-2">
+            
+            <div class="step text-center flex-fill">
+                <div
+                    class="circle {% if request.resolver_match.url_name|in_list:'entity-list, entity-create, entity-update' %}bg-success{% else %}bg-secondary{% endif %} text-white mb-2">
+                    1</div>
+                <small>Entities</small>
+            </div>
+            <div class="step text-center flex-fill">
+                <div
+                    class="circle {% if request.resolver_match.url_name|in_list:'period-list, period-create, period-update' %}bg-success{% else %}bg-secondary{% endif %} text-white mb-2">
+                    2</div>
+                <small>Periods</small>
+            </div>
+            <div class="step text-center flex-fill">
+                <div class="circle {% if request.resolver_match.url_name|in_list:'status-lists, status-create, status-update' %}bg-success{% else %}bg-secondary{% endif %} text-white mb-2">
+                    3</div>
+                    
+                <small>Status</small>
+            </div>
+            <div class="step text-center flex-fill">
+                <div
+                    class="circle {% if request.resolver_match.url_name|in_list:'gldetail-lists,gldetail-create,gldetail-update' %}bg-success{% else %}bg-secondary{% endif %} text-white mb-2">
+                    4
+                </div>
+            
+                <small>GL Details</small>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block extra_scripts %}
+    <script>
+        // Example JavaScript to show progress bar dynamically
+        function startProgress() {
+            var progressBar = document.getElementById('progressBar');
+            var progressBarContainer = document.getElementById('progressBarContainer');
+            var width = 0;
+
+            progressBarContainer.style.display = "block"; // Show progress bar
+            var interval = setInterval(function () {
+                if (width >= 100) {
+                    clearInterval(interval);
+                } else {
+                    width++;
+                    progressBar.style.width = width + '%';
+                    progressBar.setAttribute('aria-valuenow', width);
+                    progressBar.textContent = width + '%';
+                }
+            }, 100); // Increase the progress by 1% every 100ms
+        }
+
+        // You can call `startProgress()` when you want to start the progress bar.
+        // Example: startProgress();
+    </script>
+    {% endblock %}
+</body>
+
+</html>

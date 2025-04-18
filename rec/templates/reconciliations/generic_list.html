@@ -1,0 +1,28 @@
+{% extends 'reconciliations/base.html' %}
+{% block title %}{{ title }} List{% endblock %}
+{% block content %}
+<h2>{{ title }}</h2>
+<a href="{{ create_url }}" class="btn btn-primary mb-3">Add New {{ title }}</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            {% for header in headers %}<th>{{ header }}</th>{% endfor %}
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for obj in objects %}
+        <tr>
+            {% for field in fields %}<td>{{ obj|get_field:field }}</td>{% endfor %}
+            <td>
+                <a href="{{ obj.get_absolute_url }}" class="btn btn-sm btn-info">Edit</a>
+                <a href="{% url delete_url obj.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% empty %}<tr>
+            <td colspan="100%">No entries found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

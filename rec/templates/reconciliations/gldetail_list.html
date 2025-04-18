@@ -1,0 +1,35 @@
+{% extends 'reconciliations/base_generic.html' %}
+
+{% block content %}
+<h1>Gldetails</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Entity</th>
+            <th>Period</th>
+            <th>GL Number</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for gldetail in gldetails %}
+        <tr>
+            <td>{{ gldetail.entity }}</td>
+            <td>{{ gldetail.period }}</td>
+            <td>{{ gldetail.glnum }}</td>
+            <td>{{ gldetail.gldesc }}</td>
+            <td>{{ gldetail.glamt }}</td>
+            <td>{{ gldetail.status }}</td>
+            <td>
+                <a href="{% url 'gldetail-update' gldetail.pk %}" class="btn btn-primary">Edit</a>
+                <a href="{% url 'gldetail-delete' gldetail.pk %}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'gldetail-create' %}" class="btn btn-success">Add New Gldetail</a>
+{% endblock %}
