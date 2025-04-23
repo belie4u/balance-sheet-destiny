@@ -1,0 +1,38 @@
+{% extends 'reconciliations/base_generic.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Periods</h2>
+        <a href="{% url 'period-create' %}" class="btn btn-primary">+ Add New Period</a>
+    </div>
+
+    {% if object_list %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover shadow-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th>#</th>
+                    <th>Period</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for period in object_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ period.period }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'period-update' period.pk %}" class="btn btn-sm btn-outline-info">Edit</a>
+                        <a href="{% url 'period-delete' period.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No periods found. Click "Add New Period" to create one.</div>
+    {% endif %}
+</div>
+{% endblock %}

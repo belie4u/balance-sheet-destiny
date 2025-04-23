@@ -1,0 +1,23 @@
+{% extends 'reconciliations/base_generic.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow border-danger" style="max-width: 500px; width: 100%;">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Confirm Delete</h4>
+        </div>
+        <div class="card-body">
+            <p class="lead">Are you sure you want to delete the period:
+                <strong>{{ object.period }}</strong>?
+            </p>
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <a href="{% url 'period-list' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

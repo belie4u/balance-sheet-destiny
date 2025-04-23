@@ -1,0 +1,41 @@
+{% extends 'reconciliations/base_generic.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Entities</h1>
+
+    <div class="mb-3">
+        <a href="{% url 'entity-create' %}" class="btn btn-primary">Create New Entity</a>
+    </div>
+
+    {% if entities %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Entity Name</th>
+                <th scope="col">Users</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entity in entities %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ entity.entity }}</td>
+                <td>{{ entity.users.all|join:", " }}</td>
+                <td>
+                    <a href="{% url 'entity-update' entity.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'entity-delete' entity.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">
+        No entities available.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

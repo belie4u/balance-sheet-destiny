@@ -1,57 +1,161 @@
 {% extends "base.html" %}
-{% block title %}{% endblock %}
+{% block title %}Reconciliation Status{% endblock %}
 
 {% block content %}
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% load rec_extras %}
 
-<br/>
+<br>
+
 <div class="row">
-    <div class="col-12">
-        <form method="POST">
-            {% csrf_token %}
-            <div class="form-row justify-content-start">
-                <div class="form-group col-md-8">
-                    <input type="text" name="period" id="id_period" class="form-control" placeholder="mm/yyyyy" maxlength="7" minlength="7" required> 
+    <!-- 🟩 Sidebar -->
+    <div class="col-md-4">
+        <div class="bg-light p-3 rounded shadow-sm mb-4">
+            <h5 class="text-center">📊 Balance Sheet Reconciliation</h5>
+            <hr>
+            <form method="POST">
+                {% csrf_token %}
+        
+                <div class="form-group">
+                    <label for="{{ form.period.id_for_label }}">Select Period</label>
+                    {{ form.period|add_class:"form-control" }}
                 </div>
-                <div class="form-group col-md-4">
-                    <input type="submit" value="Run Reconciliation Status" class="btn btn-primary btn-block">
+        
+                <div class="form-group">
+                    <label for="{{ form.user.id_for_label }}">Select User</label>
+                    {{ form.user|add_class:"form-control" }}
                 </div>
+        
+                <div class="form-group">
+                    <label for="{{ form.entity.id_for_label }}">Select Entity</label>
+                    {{ form.entity|add_class:"form-control" }}
+                </div>
+        
+                <button type="submit" class="btn btn-primary btn-block">Run Status</button>
+            </form>
+        
+            {% if periods %}
+            <div class="text-center mt-3">
+                <strong>Period:</strong> {{ periods.period }}
             </div>
-        </form>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <br>
-        {% if periods %}
-            <center><h5>Balance Sheet Reconciliation Status</h5> </center>
-            <center><h6>Period : {{periods.period}}</h6> </center>
-        {% endif %}
-        <br>
+            {% endif %}
+        </div>
+
+
         {% if status %}
-            <table class="table table-striped">
-                <thead>
+        <div class="bg-white p-3 rounded shadow-sm">
+            <h6 class="text-center">Summary</h6>
+            <table class="table table-sm table-bordered text-center">
+                <thead class="thead-light">
                     <tr>
-                        <th scope="col">Entity</th>
-                        <th style="text-align: center;" scope="col">Accounts - Pending</th>
-                        <th style="text-align: center;" scope="col">Accounts - In Progress</th>
-                        <th style="text-align: center;" scope="col">Accounts - Completed</th>
+                        <th>Entity</th>
+                        <th>🕓 Pending</th>
+                        <th>🔄 In Progress</th>
+                        <th>✅ Completed</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for stat in status %}
-                        <tr>
-                            <td>{{stat.entity__entity}}</td>
-                            <td style="text-align: center;">{{stat.count_pending}}</td>
-                            <td style="text-align: center;">{{stat.count_inprogress}}</td>
-                            <td style="text-align: center;">{{stat.count_completed}}</td>
-                        </tr>
+                    <tr>
+                        <td>{{ stat.entity__entity }}</td>
+                        <td>{{ stat.count_pending }}</td>
+                        <td>{{ stat.count_inprogress }}</td>
+                        <td>{{ stat.count_completed }}</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 🟦 Main Content -->
+    <div class="col-md-8">
+        {% if status %}
+        <!-- Export Buttons -->
+        <div class="d-flex justify-content-end mb-3">
+            <form method="get" action="{% url 'export-reconciliations-excel' %}" class="mr-2">
+                <input type="hidden" name="period" value="{{ periods.id }}">
+                <button type="submit" class="btn btn-success">📥 Export as Excel</button>
+            </form>
+            <form method="get" action="{% url 'export-reconciliations-pdf' %}">
+                <!-- Hidden input for period -->
+                <input type="hidden" name="period" value="{{ periods.id }}">
+                <!-- You should include user and entity parameters here if they are available -->
+                <input type="hidden" name="user" value="{{ request.user.id }}"> <!-- Assuming the user is the logged-in user -->
+                <input type="hidden" name="entity" value="{{ entity.id }}">
+                <!-- Assuming you have an entity object in your context -->
+            
+                <button type="submit" class="btn btn-danger">📄 Export as PDF</button>
+            </form>
+
+        </div>
+
+        <!-- Reconciliation Details -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5>Reconciliation Details</h5>
+            <button type="button" class="btn btn-sm btn-outline-info" data-toggle="modal"
+                data-target="#reconciliationHelpModal">
+                ℹ️ Explain Fields
+            </button>
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Entity</th>
+                    <th>Beginning Balance</th>
+                    <th>Ending Balance</th>
+                    <th>Adjustments</th>
+                    <th>Explanation</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reconciliation in reconciliations %}
+                <tr>
+                    <td>{{ reconciliation.gldetail.entity.entity }}</td>
+                    <td>{{ reconciliation.beginning_balance }}</td>
+                    <td>{{ reconciliation.ending_balance }}</td>
+                    <td>{{ reconciliation.adjustments }}</td>
+                    <td>{{ reconciliation.explanation }}</td>
+                    <td>{{ reconciliation.status.option }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         {% endif %}
     </div>
 </div>
+
+<!-- 🔍 Modal Help -->
+<div class="modal fade" id="reconciliationHelpModal" tabindex="-1" role="dialog"
+    aria-labelledby="reconciliationHelpLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="reconciliationHelpLabel">Reconciliation Field Explanations</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li><strong>Entity:</strong> The business unit or department involved.</li>
+                    <li><strong>Beginning Balance:</strong> Starting balance of the account in the selected period.</li>
+                    <li><strong>Ending Balance:</strong> Final balance at period end.</li>
+                    <li><strong>Adjustments:</strong> Corrections or changes made within the period.</li>
+                    <li><strong>Explanation:</strong> Details behind any differences or entries.</li>
+                    <li><strong>Status:</strong> Indicates progress of reconciliation (Pending, In Progress, Completed).
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

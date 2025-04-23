@@ -50,35 +50,103 @@
     <nav class="navbar navbar-expand-lg static-top">
       <div class="container">
         <br>
-            <a href="#" class="navbar-brand">
-              <img src="http://127.0.0.1:8000/rec/media/documents/logo.png" width="160" alt="">
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-              <ul class="navbar-nav ml-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'gldetail-list' %}">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'status' %}">Status</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'gldetail-import' %}">Import</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-              </li>
-            </ul>
+        <a href="#" class="navbar-brand">
+          <img src="http://127.0.0.1:8000/rec/media/documents/logo.png" width="160" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+          aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'gldetail-list' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'status' %}">Status</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'gldetail-import' %}">Import</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+            </li>
+            <!-- Dropdown for Entity, Period, Status -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                Manage Data
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{% url 'entity-list' %}">Entities</a>
+                <a class="dropdown-item" href="{% url 'period-list' %}">Periods</a>
+                <a class="dropdown-item" href="{% url 'status' %}">Statuses</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
+
     <div class="container">
+
       {% block content %}{% endblock %}
+      <!-- SUMMARY SECTION -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <h5>Summary by Entity</h5>
+          <div class="row">
+            {% for entity in entity_summary %}
+            <div class="col-md-3 mb-3">
+              <div class="card border-info shadow-sm">
+                <div class="card-body">
+                  <h6 class="card-title">{{ entity.entity }}</h6>
+                  <p>Total Amount: {{ entity.total_amount|floatformat:2 }}</p>
+                  <p>Total Records: {{ entity.total_count }}</p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      
+        <div class="col-12">
+          <h5>Summary by Period</h5>
+          <div class="row">
+            {% for period in period_summary %}
+            <div class="col-md-3 mb-3">
+              <div class="card border-success shadow-sm">
+                <div class="card-body">
+                  <h6 class="card-title">{{ period.period }}</h6>
+                  <p>Total Amount: {{ period.total_amount|floatformat:2 }}</p>
+                  <p>Total Records: {{ period.total_count }}</p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      
+        <div class="col-12">
+          <h5>Summary by Status</h5>
+          <div class="row">
+            {% for status in status_summary %}
+            <div class="col-md-3 mb-3">
+              <div class="card border-warning shadow-sm">
+                <div class="card-body">
+                  <h6 class="card-title">{{ status.option }}</h6>
+                  <p>Total Amount: {{ status.total_amount|floatformat:2 }}</p>
+                  <p>Total Records: {{ status.total_count }}</p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
       {% else %}
     </div>
         <div class="row">

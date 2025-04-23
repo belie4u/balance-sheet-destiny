@@ -1,0 +1,41 @@
+{% extends 'reconciliations/base_generic.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Status List</h4>
+            <a href="{% url 'status-create' %}" class="btn btn-success btn-sm">Add New Status</a>
+        </div>
+        <div class="card-body">
+            {% if object_list %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Status Option</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for status in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ status.option }}</td>
+                            <td>
+                                <a href="{% url 'status-update' status.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'status-delete' status.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No status records found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

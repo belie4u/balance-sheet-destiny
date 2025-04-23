@@ -1,0 +1,12 @@
+{% extends 'reconciliations/base_generic.html' %}
+{% block title %}{{ title }} Form{% endblock %}
+{% block content %}
+<h2>{{ title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Save</button>
+    <a href="{{ cancel_url }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
+

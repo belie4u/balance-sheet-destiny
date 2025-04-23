@@ -1,0 +1,23 @@
+{% extends 'reconciliations/base_generic.html' %}
+
+{% block content %}
+<h2>{% if object %}Update{% else %}Create{% endif %} GL Detail</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Error:</strong> Please fix the errors below.
+    </div>
+    {% endif %}
+
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-primary">
+        {% if object %}Update{% else %}Create{% endif %} GL Detail
+    </button>
+</form>
+
+<br>
+<a href="{% url 'gldetail-list' %}" class="btn btn-secondary">Back to List</a>
+{% endblock %}
